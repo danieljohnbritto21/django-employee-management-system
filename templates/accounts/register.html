@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Employee Management System{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 64px);
+        padding: 32px 16px;
+    }
+    
+    .auth-card {
+        width: 100%;
+        max-width: 480px;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    
+    .auth-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 16px;
+    }
+    
+    .auth-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .auth-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-top: 8px;
+    }
+    
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    
+    .form-row.full {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-input {
+        position: relative;
+    }
+    
+    .form-input label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        display: block;
+    }
+    
+    .form-input input {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-dark);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-family: var(--font-family);
+        transition: all var(--transition-fast);
+    }
+    
+    .form-input input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    .form-input input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        background: var(--bg-secondary);
+    }
+    
+    .form-error {
+        color: var(--danger-color);
+        font-size: 0.85rem;
+        margin-top: 4px;
+    }
+    
+    .form-help {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-top: 4px;
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-dark);
+    }
+    
+    .auth-footer p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+    }
+    
+    .auth-footer a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all var(--transition-fast);
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 576px) {
+        .auth-container {
+            min-height: auto;
+            padding: 16px;
+        }
+        
+        .auth-card {
+            max-width: 100%;
+        }
+        
+        .auth-icon {
+            font-size: 2.5rem;
+        }
+        
+        .auth-title {
+            font-size: 1.25rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="card">
+            <div class="card-body" style="padding: 32px;">
+                <div class="auth-header">
+                    <i class="fas fa-user-plus auth-icon"></i>
+                    <h1 class="auth-title">Create Account</h1>
+                    <p class="auth-subtitle">Join our employee management system</p>
+                </div>
+                
+                <form method="POST" class="auth-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-input">
+                        <label for="id_username">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="form-error">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-input">
+                            <label for="id_first_name">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="form-error">
+                                    <i class="fas fa-exclamation-circle"></i> {{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-input">
+                            <label for="id_last_name">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="form-error">
+                                    <i class="fas fa-exclamation-circle"></i> {{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-input">
+                        <label for="id_email">Email Address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="form-error">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-input">
+                        <label for="id_password1">Password</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="form-error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {% for error in form.password1.errors %}{{ error }}<br>{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-input">
+                        <label for="id_password2">Confirm Password</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="form-error">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.password2.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card-footer">
+                <div class="auth-footer">
+                    <p>
+                        Already have an account? 
+                        <a href="{% url 'login' %}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

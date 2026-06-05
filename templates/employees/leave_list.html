@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Leave Management - EMS{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Leave Requests</h1>
+        <p class="text-muted mb-0">Track and manage employee time-off requests.</p>
+    </div>
+    <a href="{% url 'leave_apply' %}" class="btn btn-primary-gradient rounded-pill px-4 shadow-sm">
+        <i class="fas fa-plus me-2"></i> Apply Leave
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>Duration</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>{{ leave.employee.name }}</td>
+                        <td>{{ leave.leave_type }}</td>
+                        <td>{{ leave.start_date }} to {{ leave.end_date }}</td>
+                        <td>{{ leave.reason|truncatechars:30 }}</td>
+                        <td>
+                            {% if leave.status == 'Approved' %}
+                                <span class="badge bg-success">{{ leave.status }}</span>
+                            {% elif leave.status == 'Rejected' %}
+                                <span class="badge bg-danger">{{ leave.status }}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ leave.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if leave.status == 'Pending' %}
+                            <a href="{% url 'leave_status_update' leave.id 'Approved' %}" class="btn btn-sm btn-success" title="Approve"><i class="fas fa-check"></i></a>
+                            <a href="{% url 'leave_status_update' leave.id 'Rejected' %}" class="btn btn-sm btn-danger" title="Reject"><i class="fas fa-times"></i></a>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No leave requests found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if leaves.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if leaves.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ leaves.previous_page_number }}">Previous</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active"><span class="page-link">{{ leaves.number }}</span></li>
+                
+                {% if leaves.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ leaves.next_page_number }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Task Management - EMS{% endblock %}
+
+{% block content %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .page-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all var(--transition-fast);
+        margin: 0 4px;
+    }
+    
+    .action-btn-primary {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--primary-color);
+    }
+    
+    .action-btn-primary:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .action-btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+    }
+    
+    .action-btn-danger:hover {
+        background: var(--danger-color);
+        color: white;
+    }
+</style>
+
+<div class="page-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1"><i class="fas fa-tasks text-primary me-2"></i>Tasks</h1>
+        <p class="text-muted mb-0">Monitor project progress and assign work.</p>
+    </div>
+    <a href="{% url 'task_assign' %}" class="btn btn-primary-gradient rounded-pill px-4 shadow-sm">
+        <i class="fas fa-plus me-2"></i> Add Task
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-table" style="margin-right: 8px;"></i> Task List
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Assigned To</th>
+                    <th>Due Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td><strong>{{ task.title }}</strong></td>
+                    <td>{{ task.assigned_to.name }}</td>
+                    <td>{{ task.due_date|date:"d M Y" }}</td>
+                    <td>
+                        {% if task.priority == 'High' %}
+                            <span class="badge badge-primary">High</span>
+                        {% elif task.priority == 'Medium' %}
+                            <span class="badge badge-warning">Medium</span>
+                        {% else %}
+                            <span class="badge" style="background: rgba(6, 182, 212, 0.1); color: var(--info-color);">Low</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.status == 'Completed' %}
+                            <span class="badge badge-success">Completed</span>
+                        {% elif task.status == 'In Progress' %}
+                            <span class="badge badge-primary">In Progress</span>
+                        {% else %}
+                            <span class="badge" style="background: rgba(0,0,0,0.1); color: var(--text-secondary);">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="{% url 'task_edit' task.id %}" class="action-btn action-btn-primary" title="Edit Task">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'task_delete' task.id %}" class="action-btn action-btn-danger" title="Delete Task">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center" style="padding: 48px 16px;">
+                        <i class="fas fa-clipboard-list fa-3x" style="opacity: 0.3; margin-bottom: 16px; display: block;"></i>
+                        <p style="color: var(--text-secondary); margin: 0;">No tasks found. <a href="{% url 'task_assign' %}" style="color: var(--primary-color);">Assign the first task</a></p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if tasks.has_other_pages %}
+    <div class="card-footer">
+        <nav aria-label="Page navigation">
+            <div class="pagination" style="justify-content: center;">
+                {% if tasks.has_previous %}
+                <a class="page-link" href="?page={{ tasks.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+                {% else %}
+                <span class="page-link" style="opacity: 0.5; cursor: not-allowed;">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </span>
+                {% endif %}
+                
+                <span class="page-link active">Page {{ tasks.number }}</span>
+                
+                {% if tasks.has_next %}
+                <a class="page-link" href="?page={{ tasks.next_page_number }}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+                {% else %}
+                <span class="page-link" style="opacity: 0.5; cursor: not-allowed;">
+                    Next <i class="fas fa-chevron-right"></i>
+                </span>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

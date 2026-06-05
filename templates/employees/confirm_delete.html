@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete - Employee Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle"></i> Confirm Delete
+            </div>
+            <div class="card-body">
+                <p class="mb-4">
+                    Are you sure you want to delete <strong>{{ employee.name }}</strong>?
+                </p>
+                <p class="text-muted">
+                    <i class="fas fa-info-circle"></i> This action cannot be undone.
+                </p>
+            </div>
+            <div class="card-footer">
+                <form method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <a href="{% url 'employee_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
